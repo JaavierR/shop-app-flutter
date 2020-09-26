@@ -23,10 +23,25 @@ class ProductsGrid extends StatelessWidget {
     return GridView.builder(
       padding: const EdgeInsets.all(10.0),
       itemCount: products.length,
-      itemBuilder: (context, index) => ProductItem(
-        id: products[index].id,
-        title: products[index].title,
-        imageUrl: products[index].imageUrl,
+      itemBuilder: (context, index) => ChangeNotifierProvider.value(
+        // ChangeNotifierProvider cleans up the data for my when it's not
+        // required anymore.
+        //
+        // The dot value it's the right approach if the provider on something
+        // that's part of a list or a grid. The dot ensure that the provider
+        // works even if the data changes for the widget, because instead
+        // with the builder or create function that would not work correctly
+        // here, it will work correctly 'cause now is tied to its data and is
+        // attached and detached to and from the widget. Instead of changing
+        // data being attached to the same provider.
+        //
+        // create: (context) => products[index],
+        value: products[index],
+        child: ProductItem(
+            // id: products[index].id,
+            // title: products[index].title,
+            // imageUrl: products[index].imageUrl,
+            ),
       ),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,

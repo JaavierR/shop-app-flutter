@@ -11,13 +11,17 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => Products(),
+      // If I reuse and existing object tiku in the products_grid.dart I should
+      // use the dot value provider with the value I'm providing as we're doing
+      // in that file.
+      // When I create a new instance of Object and I want to provide this, I
+      // use the create or the builder method.
+      create: (_) => Products(),
       child: MaterialApp(
         title: 'MyShop',
         theme: ThemeData(
-          primarySwatch: Colors.grey,
-          primaryColor: Colors.grey[900],
-          scaffoldBackgroundColor: Colors.grey[800],
+          brightness: Brightness.dark,
+          primarySwatch: Colors.cyan,
           accentColor: Colors.deepOrange,
           fontFamily: 'Lato',
         ),
