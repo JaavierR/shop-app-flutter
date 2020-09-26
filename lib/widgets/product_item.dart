@@ -3,7 +3,12 @@ import 'package:provider/provider.dart';
 
 import '../screens/product_detail_screen.dart';
 import '../providers/product.dart';
+import '../providers/products.dart';
 
+// I only use Stateful widget to change how something is displayed inside of a
+// widget (avoid using provider-provider class)
+// In this widget we use provider because the data related to if is favorite or
+// not, does not only matter to this widget.
 class ProductItem extends StatelessWidget {
   // final String id;
   // final String title;
@@ -29,6 +34,11 @@ class ProductItem extends StatelessWidget {
       context,
       listen: false,
     );
+    final refreshProducts = Provider.of<Products>(
+      context,
+      listen: false,
+    );
+
     return ClipRRect(
       borderRadius: BorderRadius.circular(10.0),
       child: GridTile(
@@ -55,6 +65,7 @@ class ProductItem extends StatelessWidget {
               ),
               onPressed: () {
                 product.toggleFavoriteStatus();
+                refreshProducts.refreshProductList();
               },
               color: Theme.of(context).accentColor,
             ),
