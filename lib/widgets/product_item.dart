@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../screens/product_detail_screen.dart';
+import '../providers/cart.dart';
 import '../providers/product.dart';
 import '../providers/products.dart';
+import '../screens/product_detail_screen.dart';
 
 // I only use Stateful widget to change how something is displayed inside of a
 // widget (avoid using provider-provider class)
@@ -35,6 +36,10 @@ class ProductItem extends StatelessWidget {
       listen: false,
     );
     final refreshProducts = Provider.of<Products>(
+      context,
+      listen: false,
+    );
+    final cart = Provider.of<Cart>(
       context,
       listen: false,
     );
@@ -76,7 +81,13 @@ class ProductItem extends StatelessWidget {
           ),
           trailing: IconButton(
             icon: const Icon(Icons.shopping_cart),
-            onPressed: () {},
+            onPressed: () {
+              cart.addItem(
+                productId: product.id,
+                price: product.price,
+                title: product.title,
+              );
+            },
             color: Theme.of(context).accentColor,
           ),
         ),
