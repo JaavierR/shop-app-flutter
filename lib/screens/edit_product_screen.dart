@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../providers/product.dart';
+import '../providers/products.dart';
 
 class EditProductScreen extends StatefulWidget {
   static const routeName = '/edit-product';
@@ -24,19 +26,19 @@ class _EditProductScreenState extends State<EditProductScreen> {
   );
 
   @override
-  void initState() {
-    super.initState();
-    _imageUrlFocusNode.addListener(_updateImageUrl);
-  }
-
-  @override
   void dispose() {
     super.dispose();
     _imageUrlFocusNode.removeListener(_updateImageUrl);
     _priceFocusNode.dispose();
     _descriptionFocusNode.dispose();
-    _priceFocusNode.dispose();
     _imageUrlController.dispose();
+    _imageUrlFocusNode.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _imageUrlFocusNode.addListener(_updateImageUrl);
   }
 
   void _saveForm() {
@@ -47,23 +49,29 @@ class _EditProductScreenState extends State<EditProductScreen> {
     }
 
     _form.currentState.save();
-    print(_editedProduct.title);
-    print(_editedProduct.description);
-    print(_editedProduct.price);
-    print(_editedProduct.imageUrl);
+    Provider.of<Products>(
+      context,
+      listen: false,
+    ).addProduct(_editedProduct);
+    Navigator.of(context).pop();
   }
 
   void _updateImageUrl() {
-    if (!_imageUrlFocusNode.hasFocus) {
-      if ((!_imageUrlController.text.startsWith('http') &&
-              !_imageUrlController.text.startsWith('https')) ||
-          (!_imageUrlController.text.endsWith('.png') &&
-              !_imageUrlController.text.endsWith('.jpg') &&
-              !_imageUrlController.text.endsWith('.jpeg'))) {
-        return;
+    setState(() {
+      if (!_imageUrlFocusNode.hasFocus) {
+        if ((!_imageUrlController.text.startsWith('http://') &&
+                !_imageUrlController.text.startsWith('https://')) ||
+            (!_imageUrlController.text.endsWith('.png') &&
+                !_imageUrlController.text.endsWith('.jpg') &&
+                !_imageUrlController.text.endsWith('.jpeg'))) {
+          return;
+        }
       }
-      setState(() {});
-    }
+
+      if (_imageUrlController.text.isEmpty) {
+        _imageUrlController.clear();
+      }
+    });
   }
 
   @override
@@ -145,7 +153,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                   if (value.isEmpty) {
                     return 'Please enter a description.';
                   }
-                  if (value.length > 10) {
+                  if (value.length < 10) {
                     return 'Please enter a meaningful description.';
                   }
                   return null;
