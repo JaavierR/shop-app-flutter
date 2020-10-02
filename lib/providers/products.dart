@@ -75,12 +75,21 @@ class Products with ChangeNotifier {
     notifyListeners();
   }
 
-  // Async and await works together.
+  Future<void> fetchAndSetProducts() async {
+    const url = 'https://shop-app-d76fe.firebaseio.com/products.json';
+    try {
+      final response = await http.get(url);
+    } catch (error) {
+      throw (error);
+    }
+  }
 
+  // Async and await works together.
   Future<void> addProduct(Product product) async {
     // /products.json it's only a specialty for firebase, other APIs not
     // require this.
     const url = 'https://shop-app-d76fe.firebaseio.com/products.json';
+
     try {
       // I need to return here and not inside the .then() method. If i return
       // in the end of the block of code is that, a synchronys execution, so
