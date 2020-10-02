@@ -75,11 +75,14 @@ class Products with ChangeNotifier {
     notifyListeners();
   }
 
-  void addProduct(Product product) {
+  Future<void> addProduct(Product product) {
     // /products.json it's only a specialty for firebase, other APIs not
     // require this.
     const url = 'https://shop-app-d76fe.firebaseio.com/products.json';
-    http
+    // I need to return here and not inside the .then() method. If i return
+    // in the end of the block of code is that, a synchronys execution, so
+    // I'll return inmediately.
+    return http
         .post(
       url,
       body: json.encode(
