@@ -74,7 +74,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
     _isInit = false;
   }
 
-  void _saveForm() {
+  Future<void> _saveForm() async {
     final isValid = _form.currentState.validate();
 
     if (!isValid) {
@@ -99,12 +99,13 @@ class _EditProductScreenState extends State<EditProductScreen> {
 
       Navigator.of(context).pop();
     } else {
-      Provider.of<Products>(
-        context,
-        listen: false,
-      ).addProduct(_editedProduct).catchError((error) {
-        // I need to return showDialog with the null.
-        return showDialog<Null>(
+      try {
+        await Provider.of<Products>(
+          context,
+          listen: false,
+        ).addProduct(_editedProduct);
+      } catch (error) {
+        await showDialog(
           context: context,
           builder: (ctx) => AlertDialog(
             title: Text('An error occurred!'),
@@ -117,14 +118,15 @@ class _EditProductScreenState extends State<EditProductScreen> {
             ],
           ),
         );
-      }).then((_) {
+      } finally {
+        //  Code that allways run no matter if I succeded or if I failed.
         setState(() {
           _isLoading = false;
         });
         //  We're waiting until the request is sent, to go back to the previous
         // page.
         Navigator.of(context).pop();
-      });
+      }
     }
     // Navigator.of(context).pop();
   }

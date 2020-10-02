@@ -75,27 +75,29 @@ class Products with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> addProduct(Product product) {
+  // Async and await works together.
+
+  Future<void> addProduct(Product product) async {
     // /products.json it's only a specialty for firebase, other APIs not
     // require this.
     const url = 'https://shop-app-d76fe.firebaseio.com/products.json';
-    // I need to return here and not inside the .then() method. If i return
-    // in the end of the block of code is that, a synchronys execution, so
-    // I'll return inmediately.
-    return http
-        .post(
-      url,
-      body: json.encode(
-        {
-          'title': product.title,
-          'description': product.description,
-          'imageUrl': product.imageUrl,
-          'price': product.price,
-          'isFavorite': product.isFavorite,
-        },
-      ),
-    )
-        .then((response) {
+    try {
+      // I need to return here and not inside the .then() method. If i return
+      // in the end of the block of code is that, a synchronys execution, so
+      // I'll return inmediately.
+      final response = await http.post(
+        url,
+        body: json.encode(
+          {
+            'title': product.title,
+            'description': product.description,
+            'imageUrl': product.imageUrl,
+            'price': product.price,
+            'isFavorite': product.isFavorite,
+          },
+        ),
+      );
+
       final newProduct = Product(
         id: json.decode(response.body)['name'],
         title: product.title,
@@ -107,10 +109,10 @@ class Products with ChangeNotifier {
       _items.add(newProduct);
       // _items.insert(0, newProduct); // at the start of the list
       notifyListeners();
-    }).catchError((error) {
+    } catch (error) {
       print(error);
       throw error;
-    });
+    }
   }
 
   void updateProduct(String id, Product newProduct) {
