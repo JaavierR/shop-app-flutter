@@ -5,13 +5,34 @@ import '../providers/orders.dart' show Orders;
 import '../widgets/app_drawer.dart';
 import '../widgets/order_item.dart';
 
-class OrdersScreen extends StatelessWidget {
+class OrdersScreen extends StatefulWidget {
   static const routeName = '/orders';
+
+  @override
+  _OrdersScreenState createState() => _OrdersScreenState();
+}
+
+class _OrdersScreenState extends State<OrdersScreen> {
+  Future _ordersFuture;
+
+  Future _obtainOrdersFuture() {
+    return Provider.of<Orders>(
+      context,
+      listen: false,
+    ).fetchAndSetOrders();
+  }
+
   Future<void> _refreshOrders(BuildContext context) async {
     await Provider.of<Orders>(
       context,
       listen: false,
     ).fetchAndSetOrders();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _ordersFuture = _obtainOrdersFuture();
   }
 
   @override
@@ -27,10 +48,7 @@ class OrdersScreen extends StatelessWidget {
       // stateful and also allows me not to use an extra variable to see which
       // widget to load. (_isLoading variable)
       body: FutureBuilder(
-          future: Provider.of<Orders>(
-            context,
-            listen: false,
-          ).fetchAndSetOrders(),
+          future: _ordersFuture,
           builder: (ctx, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Center(child: CircularProgressIndicator());
