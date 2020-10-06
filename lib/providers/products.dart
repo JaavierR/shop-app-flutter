@@ -80,9 +80,15 @@ class Products with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> fetchAndSetProducts() async {
+  // Squared brackets make a positional argument optional, by I need should
+  // provide a default value.
+  Future<void> fetchAndSetProducts([bool filterByUser = false]) async {
+    final filterString =
+        filterByUser ? 'orderBy="creatorId"&equalTo="$userId"' : '';
+    // In this update we are filtering by creatorId equals to the current
+    // userId loged in.
     var url =
-        'https://shop-app-d76fe.firebaseio.com/products.json?auth=$authToken';
+        'https://shop-app-d76fe.firebaseio.com/products.json?auth=$authToken&$filterString';
     try {
       final response = await http.get(url);
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
@@ -137,6 +143,8 @@ class Products with ChangeNotifier {
             'description': product.description,
             'imageUrl': product.imageUrl,
             'price': product.price,
+            // Only add the user in the server and not in our local model.
+            'creatorId': userId,
           },
         ),
       );
