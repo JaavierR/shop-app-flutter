@@ -36,16 +36,24 @@ class MyApp extends StatelessWidget {
             previousProduct == null ? [] : previousProduct.items,
           ),
         ),
-        ChangeNotifierProvider(
+        ChangeNotifierProxyProvider<Auth, Cart>(
           // If I reuse and existing object tiku in the products_grid.dart I should
           // use the dot value provider with the value I'm providing as we're doing
           // in that file.
           // When I create a new instance of Object and I want to provide this, I
           // use the create or the builder method.
-          create: (_) => Cart(),
+          create: null,
+          update: (_, auth, previousCart) => Cart(
+            auth.token,
+            previousCart == null ? {} : previousCart.items,
+          ),
         ),
-        ChangeNotifierProvider(
-          create: (_) => Orders(),
+        ChangeNotifierProxyProvider<Auth, Orders>(
+          create: null,
+          update: (_, auth, previousOrders) => Orders(
+            auth.token,
+            previousOrders == null ? [] : previousOrders.orders,
+          ),
         )
       ],
       child: Consumer<Auth>(

@@ -114,7 +114,8 @@ class Products with ChangeNotifier {
   Future<void> addProduct(Product product) async {
     // /products.json it's only a specialty for firebase, other APIs not
     // require this.
-    const url = 'https://shop-app-d76fe.firebaseio.com/products.json';
+    final url =
+        'https://shop-app-d76fe.firebaseio.com/products.json?auth=$authToken';
 
     try {
       // I need to return here and not inside the .then() method. If i return
@@ -154,7 +155,8 @@ class Products with ChangeNotifier {
     final productIndex = _items.indexWhere((element) => element.id == id);
 
     if (productIndex >= 0) {
-      final url = 'https://shop-app-d76fe.firebaseio.com/products/$id.json';
+      final url =
+          'https://shop-app-d76fe.firebaseio.com/products/$id.json?auth=$authToken';
       try {
         await http.patch(
           url,
@@ -179,7 +181,8 @@ class Products with ChangeNotifier {
   }
 
   Future<void> deleteProduct(String id) async {
-    final url = 'https://shop-app-d76fe.firebaseio.com/products/$id.json';
+    final url =
+        'https://shop-app-d76fe.firebaseio.com/products/$id.json?auth=$authToken';
     final existingProductIndex =
         _items.indexWhere((element) => element.id == id);
     var existingProduct = _items[existingProductIndex];
