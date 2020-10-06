@@ -23,15 +23,25 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (_) => Auth(),
         ),
+        ChangeNotifierProxyProvider<Auth, Products>(
+          // Set up a provider wich itself depends on another provider which
+          // was defined before this one. So Auth() provider need to be the
+          // first one on the list.
+          // Now this provider will be rebuilt when the previous (Auth) changes,
+          // because the Auth object is now a dependency of this provider. i.e.
+          // a new Products object would be built when of changes.
+          create: null,
+          update: (_, auth, previousProduct) => Products(
+            auth.token,
+            previousProduct == null ? [] : previousProduct.items,
+          ),
+        ),
         ChangeNotifierProvider(
           // If I reuse and existing object tiku in the products_grid.dart I should
           // use the dot value provider with the value I'm providing as we're doing
           // in that file.
           // When I create a new instance of Object and I want to provide this, I
           // use the create or the builder method.
-          create: (_) => Products(),
-        ),
-        ChangeNotifierProvider(
           create: (_) => Cart(),
         ),
         ChangeNotifierProvider(
